@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel Kendali Admin - Portal Nilai</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-900 font-sans min-h-screen text-slate-100 flex flex-col justify-between">
+
+    <div class="flex-grow flex items-center justify-center p-4">
+        
+        <div id="adminLoginCard" class="w-full max-w-md bg-slate-800 p-8 rounded-2xl shadow-2xl border border-slate-700 transition-all">
+            <div class="text-center mb-6">
+                <div class="w-12 h-12 bg-indigo-600 text-white rounded-xl flex items-center justify-center mx-auto mb-3 shadow-lg shadow-indigo-900/50 font-bold text-xl">🔐</div>
+                <h2 class="text-2xl font-bold text-white">Administrator Login</h2>
+                <p class="text-sm text-slate-400 mt-1">Gunakan akun admin yang terdaftar di database</p>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">ID Admin / Username</label>
+                    <input type="text" id="adminUser" placeholder="Username Admin" class="w-full px-4 py-2.5 bg-slate-700 rounded-xl border border-slate-600 outline-none focus:border-indigo-400 text-white transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-300 mb-1">Kata Sandi</label>
+                    <input type="password" id="adminPass" placeholder="••••••••" class="w-full px-4 py-2.5 bg-slate-700 rounded-xl border border-slate-600 outline-none focus:border-indigo-400 text-white transition">
+                </div>
+                <button onclick="loginAdmin()" id="btnAdmin" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl transition shadow-lg shadow-indigo-900/30 cursor-pointer">
+                    Masuk Dashboard
+                </button>
+            </div>
+        </div>
+
+        <div id="adminDashboard" class="w-full max-w-5xl bg-slate-800 p-6 rounded-2xl shadow-2xl border border-slate-700 hidden transition-all">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-700 pb-4 mb-6 gap-4">
+                <div>
+                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Panel Kontrol Utama Admin
+                    </h3>
+                    <p class="text-xs text-slate-400">Halo, <span id="namaAdmin" class="text-indigo-300 font-semibold">Admin</span> • Pantau jejak digital akses siswa</p>
+                </div>
+                <div class="flex gap-2 w-full sm:w-auto">
+                    <button onclick="loadHistori()" class="flex-1 sm:flex-none text-xs bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded-xl font-medium transition cursor-pointer">
+                        🔄 Perbarui Log (Refresh)
+                    </button>
+                    <button onclick="logoutAdmin()" class="text-xs bg-red-900/40 hover:bg-red-900/70 text-red-300 px-4 py-2 rounded-xl font-medium transition border border-red-800/60 cursor-pointer">
+                        Keluar
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-indigo-950/40 border border-indigo-800/60 rounded-xl p-4 mb-6 flex flex-col sm:flex-row justify-between items-center gap-3">
+                <div class="text-center sm:text-left">
+                    <h4 class="font-semibold text-indigo-200 text-sm">Kelola & Update Nilai Siswa</h4>
+                    <p class="text-xs text-indigo-300/80 mt-0.5">Edit status keterpenuhan nilai langsung di Google Sheets Anda. Data di web siswa akan otomatis ter-update.</p>
+                </div>
+                <a href="https://docs.google.com/spreadsheets" target="_blank" class="w-full sm:w-auto text-center bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold px-4 py-2.5 rounded-lg shadow transition">
+                    Buka Google Sheets Database ↗
+                </a>
+            </div>
+
+            <h4 class="font-semibold text-slate-300 mb-3 text-xs uppercase tracking-wider">Histori Jejak Akses Siswa (Real-Time)</h4>
+            <div class="overflow-x-auto rounded-xl border border-slate-700 bg-slate-900/50">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-700/70 text-slate-300 text-xs uppercase font-semibold">
+                            <th class="p-3">Waktu Akses (WIB)</th>
+                            <th class="p-3">NISN / Username</th>
+                            <th class="p-3">Nama Lengkap Siswa</th>
+                            <th class="p-3 text-center">Status Nilai Saat Login</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelLogBody" class="text-sm divide-y divide-slate-700 text-slate-300">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="text-center py-4 text-xs text-slate-600 border-t border-slate-800 bg-slate-950">
+        Panel Admin Terproteksi &copy; 2026 Portal Nilai Mandiri
+    </footer>
+
+    <script>
+        // URL SCRIPT DATABASE YANG SAMA DENGAN INDEX.HTML
+        const API_URL = "https://script.google.com/macros/s/AKfycbw_2NX54EjoCUsyKJE-XJpz9Q_5bEhSYPpc0j0mrAYk-zHPXruaH0UXwj2Bt4wU1xJx3A/exec";
+
+        async function loginAdmin() {
+            const userIn = document.getElementById('adminUser');
+            const passIn = document.getElementById('adminPass');
+            const btn = document.getElementById('btnAdmin');
+
+            if(!userIn.value || !passIn.value) return alert("Kredensial wajib diisi!");
+
+            btn.disabled = true;
+            btn.innerText = "Memverifikasi...";
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "login_admin",
+                        username: userIn.value,
+                        password: passIn.value
+                    })
+                });
+                const res = await response.json();
+
+                if(res.status === "success") {
+                    document.getElementById('adminLoginCard').classList.add('hidden');
+                    document.getElementById('adminDashboard').classList.remove('hidden');
+                    document.getElementById('namaAdmin').innerText = res.user.nama;
+                    
+                    // Otomatis tarik log histori akses setelah login admin sukses
+                    loadHistori();
+                } else {
+                    alert(res.message);
+                }
+            } catch(e) {
+                alert("Koneksi ke server database gagal.");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Masuk Dashboard";
+            }
+        }
+
+        async function loadHistori() {
+            const tbody = document.getElementById('tabelLogBody');
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center p-6 text-slate-500 text-xs animate-pulse">Mengambil catatan log terbaru...</td></tr>`;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "get_logs" })
+                });
+                const res = await response.json();
+
+                if(res.status === "success") {
+                    tbody.innerHTML = "";
+                    if(res.data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="4" class="text-center p-6 text-slate-500">Belum ada aktivitas login dari siswa.</td></tr>`;
+                        return;
+                    }
+
+                    res.data.forEach(log => {
+                        const isOk = log.status === 'Terpenuhi';
+                        const badgeStyle = isOk ? 'bg-emerald-950/80 text-emerald-400 border-emerald-900/60' : 'bg-amber-950/80 text-amber-400 border-amber-900/60';
+                        
+                        tbody.innerHTML += `
+                            <tr class="hover:bg-slate-700/30 transition duration-150">
+                                <td class="p-3 text-slate-400 text-xs font-mono">${log.waktu}</td>
+                                <td class="p-3 font-semibold text-indigo-400">${log.username}</td>
+                                <td class="p-3 text-white font-medium">${log.nama}</td>
+                                <td class="p-3 text-center">
+                                    <span class="text-xs px-2.5 py-1 rounded-md font-medium border ${badgeStyle}">${log.status}</span>
+                                </td>
+                            </tr>
+                        `;
+                    });
+                }
+            } catch(e) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center p-6 text-rose-400 text-xs">Gagal memperbarui log data histori.</td></tr>`;
+            }
+        }
+
+        function logoutAdmin() {
+            window.location.reload();
+        }
+    </script>
+</body>
+</html>
