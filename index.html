@@ -81,7 +81,7 @@
 
     <script>
         // MASUKKAN URL APPS SCRIPT ANDA DI SINI
-        const API_URL = "https://script.google.com/macros/s/AKfycbzfjCxN4UhIvu98Vl-NXgCbmNe_lilJeCbQmuoln3a-CHlfU2ubnGFLdUeojWr5f27i4w/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbybSu1-RUn_pOpAlxSqNMJtE3sRtSwXxpnu2ye3lgBUfSX0ZtYhmxEtpBxUZJXDhfWegQ/exec";
 
         async function prosesLogin() {
             const userBox = document.getElementById('username');
@@ -206,7 +206,7 @@
                             <span class="text-lg mt-0.5">${iconStatus}</span>
                             <div>
                                 <h5 class="font-semibold text-slate-800">${item.mapel}</h5>
-                                <p class="text-xs text-slate-500 mt-0.5">${item.catatan || 'Tidak ada catatan khusus'}</p>
+                                <p class="text-xs text-slate-500 mt-0.5">${(item.catatan && item.catatan !== '-') ? item.catatan : ''}</p>
                             </div>
                         </div>
                         <div class="pl-8 md:pl-0">
