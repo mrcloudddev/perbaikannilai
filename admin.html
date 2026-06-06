@@ -191,7 +191,7 @@
 
     <script>
         // URL SCRIPT DATABASE - SESUAIKAN DENGAN URL APPS SCRIPT ANDA
-        const API_URL = "https://script.google.com/macros/s/AKfycbzfjCxN4UhIvu98Vl-NXgCbmNe_lilJeCbQmuoln3a-CHlfU2ubnGFLdUeojWr5f27i4w/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbw_2NX54EjoCUsyKJE-XJpz9Q_5bEhSYPpc0j0mrAYk-zHPXruaH0UXwj2Bt4wU1xJx3A/exec";
 
         // ============================
         // INISIALISASI: Baris mapel pertama otomatis ditambahkan
@@ -286,7 +286,7 @@
                     </select>
                 </div>
                 <div class="flex-1">
-                    <input type="text" id="mapelCatatan_${id}" value="${catatanMapel}" placeholder="Catatan mapel (opsional)" class="w-full px-3 py-2 bg-slate-600 rounded-lg border border-slate-500 outline-none focus:border-indigo-400 text-white text-sm transition">
+                    <input type="text" id="mapelCatatan_${id}" value="${catatanMapel === '-' ? '' : catatanMapel}" placeholder="Catatan mapel (opsional)" class="w-full px-3 py-2 bg-slate-600 rounded-lg border border-slate-500 outline-none focus:border-indigo-400 text-white text-sm transition">
                 </div>
                 <button onclick="hapusBarisMApel(${id})" class="text-slate-400 hover:text-rose-400 text-lg transition cursor-pointer flex-shrink-0 p-1">🗑️</button>
             `;
