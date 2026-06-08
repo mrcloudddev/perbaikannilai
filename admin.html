@@ -229,6 +229,7 @@
                     document.getElementById('adminDashboard').classList.remove('hidden');
                     document.getElementById('namaAdmin').innerText = res.user.nama;
                     loadHistori();
+                    startLogAutoRefresh();
                 } else {
                     alert(res.message);
                 }
@@ -243,6 +244,20 @@
         // ============================
         // TAB SWITCHING
         // ============================
+        let logAutoRefreshInterval = null;
+
+        function startLogAutoRefresh() {
+            stopLogAutoRefresh();
+            logAutoRefreshInterval = setInterval(loadHistori, 15000); // refresh tiap 15 detik
+        }
+
+        function stopLogAutoRefresh() {
+            if (logAutoRefreshInterval) {
+                clearInterval(logAutoRefreshInterval);
+                logAutoRefreshInterval = null;
+            }
+        }
+
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.getElementById(tabId).classList.remove('hidden');
@@ -257,7 +272,12 @@
             activeBtn.classList.remove('bg-slate-700', 'text-slate-300');
             activeBtn.classList.add('bg-indigo-600', 'text-white');
 
-            if (tabId === 'tabLog') loadHistori();
+            if (tabId === 'tabLog') {
+                loadHistori();
+                startLogAutoRefresh();
+            } else {
+                stopLogAutoRefresh();
+            }
             if (tabId === 'tabDaftarSiswa') loadDaftarSiswa();
         }
 
@@ -557,6 +577,7 @@
         }
 
         function logoutAdmin() {
+            stopLogAutoRefresh();
             window.location.reload();
         }
     </script>
