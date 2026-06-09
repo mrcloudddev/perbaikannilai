@@ -191,7 +191,7 @@
 
     <script>
         // URL SCRIPT DATABASE - SESUAIKAN DENGAN URL APPS SCRIPT ANDA
-        const API_URL = "https://script.google.com/macros/s/AKfycbxzxTLWOlT3UrG8nk-o9xxBdoCwUD6GOPC8fDdbmeoQ8gYO-iagYuqQG_3Es07di_Y5hg/exec";
+        const API_URL = "https://script.google.com/macros/s/AKfycbySq7BuG7jwf8NOq6UEN0_n33nYZFYHoH-YRa0IVweTC4ve5QV-rwLItT_HInwsH2fyXQ/exec";
 
         // ============================
         // INISIALISASI: Baris mapel pertama otomatis ditambahkan
@@ -466,7 +466,7 @@
                     }
 
                     res.data.forEach(log => {
-                        const isOk = log.status === 'Terpenuhi' || log.status === 'TUNTAS';
+                        const isOk = ['terpenuhi', 'tuntas'].includes((log.status || '').toLowerCase());
                         const badgeStyle = isOk ? 'bg-emerald-950/80 text-emerald-400 border-emerald-900/60' : 'bg-amber-950/80 text-amber-400 border-amber-900/60';
                         
                         tbody.innerHTML += `
